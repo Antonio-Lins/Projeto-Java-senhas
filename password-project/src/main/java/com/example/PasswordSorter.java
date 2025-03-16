@@ -13,12 +13,48 @@ public class PasswordSorter {
 
         try (CSVReader reader = new CSVReader(new FileReader(inputFile));
              CSVWriter writer = new CSVWriter(new FileWriter(outputFile))) {
+
             List<String[]> records = reader.readAll();
 
-            // Ordena por comprimento (decrescente)
-            records.sort((a, b) -> Integer.compare(b[0].length(), a[0].length()));
+            if (records.isEmpty()) {
+                System.err.println("O arquivo CSV está vazio.");
+                return;
+            }
 
-            writer.writeAll(records); // Escreve no arquivo de saída
+            // separa o cabeçalho dos dados
+            String[] header = records.get(0);
+            records.remove(0);
+
+            // valida se o cabeçalho contém "length"
+            if (header.length < 3 || !"length".equalsIgnoreCase(header[2].trim())) {
+                System.err.println("Erro: Cabeçalho inesperado no CSV.");
+                return;
+            }
+
+            // filtra e ordena os dados
+            List<String[]> validRecords = new ArrayList<>();
+            for (String[] row : records) {
+                if (row.length > 2 && row[2] != null && !row[2].trim().isEmpty()) {
+                    try {
+                        int length = Integer.parseInt(row[2].replaceAll("\"", "").trim()); // remove aspas e converte
+                        validRecords.add(row);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Linha ignorada (valor inválido na coluna 'length'): " + Arrays.toString(row));
+                    }
+                }
+            }
+
+            // ordena do maior para o menor
+            validRecords.sort((a, b) -> {
+                int lenA = Integer.parseInt(a[2].replaceAll("\"", "").trim());
+                int lenB = Integer.parseInt(b[2].replaceAll("\"", "").trim());
+                return Integer.compare(lenB, lenA);
+            });
+
+            // escreve o cabeçalho e os dados ordenados
+            writer.writeNext(header);
+            writer.writeAll(validRecords);
         }
+        System.out.println("Ordenação concluída. Arquivo gerado: " + outputFile);
     }
 }
