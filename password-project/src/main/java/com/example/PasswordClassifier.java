@@ -32,11 +32,6 @@ public class PasswordClassifier {
                 return;
             }
 
-            // debug: exibir as primeiras linhas do csv para checar se está correto
-            for (int i = 0; i < Math.min(5, records.size()); i++) {
-                System.out.println("linha " + i + ": " + String.join(", ", records.get(i)));
-            }
-
             // adiciona o cabeçalho da nova coluna
             String[] header = records.get(0);
             String[] newHeader = new String[header.length + 1];
@@ -48,11 +43,17 @@ public class PasswordClassifier {
             for (int i = 1; i < records.size(); i++) {
                 String[] record = records.get(i);
 
-                // verificar qual coluna contém a senha
-                String password = record[0]; // caso a senha esteja em outra coluna, ajuste o índice aqui
+                // garantir que há pelo menos três colunas (índice, senha, tamanho)
+                if (record.length < 3) { 
+                    System.err.println("linha inválida encontrada no índice: " + i);
+                    continue;
+                }
+
+                String password = record[1].trim(); // pega a senha corretamente da segunda coluna
 
                 String classification = classifyPassword(password);
-                System.out.println("senha: " + password + " | classificação: " + classification); // log para depuração
+                System.out.println("senha: " + password + " | classificação: " + classification);
+
                 String[] newRecord = new String[record.length + 1];
                 System.arraycopy(record, 0, newRecord, 0, record.length);
                 newRecord[record.length] = classification;
@@ -76,15 +77,17 @@ public class PasswordClassifier {
         if (hasSpecial) types++;
 
         // log para depuração
-        System.out.println("analisando senha: " + password + " | tamanho: " + length + " | tipos: " + types);
+        System.out.println("analisando senha: " + password + " | tamanho: " + length + 
+            " | letras: " + hasLetter + " | números: " + hasNumber + " | especiais: " + hasSpecial + 
+            " | tipos: " + types);
 
-        if (length < 5) return "muito ruim"; // senhas muito curtas são sempre ruins
-        if (length < 8 && types == 1) return "ruim"; // senhas menores que 8 e com um tipo são ruins
-        if (length >= 8 && types == 1) return "fraca"; // senhas longas mas com um só tipo são fracas
-        if (length >= 8 && types == 2) return "média"; // senhas com dois tipos são médias
-        if (length >= 8 && types == 3) return "forte"; // senhas com três tipos são fortes
-        if (length >= 12 && types == 3) return "muito forte"; // senhas grandes e completas são muito fortes
+        // aplicar regras corretamente
+        if (length < 5 && types == 1) return "muito ruim";
+        if (length <= 5 && types == 1) return "ruim";
+        if (length <= 6 && types == 2) return "fraca";
+        if (length <= 7 && types == 3) return "boa";
+        if (length > 8 && types == 3) return "muito boa";
 
-        return "sem classificação"; // evita casos sem classificação
+        return "sem classificação";
     }
 }
