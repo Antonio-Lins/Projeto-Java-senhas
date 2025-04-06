@@ -45,8 +45,8 @@ public class DateFormatter {
 
     public static String formatDate(String date) {
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        
+        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy"); // ✅ formato corrigido
+
         try {
             return outputFormat.format(inputFormat.parse(date));
         } catch (ParseException e) {
