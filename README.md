@@ -6,8 +6,8 @@ este projeto tem como objetivo aplicar transformações e classificações em um
 
 as operações envolvem:
 
-- **classificação** de senhas com base em critérios de segurança.
-- **formatação** de datas para o padrão brasileiro.
+- **classificação** de senhas com base em critérios de segurança.  
+- **formatação** de datas para o padrão brasileiro.  
 - **filtragem** das senhas classificadas como "boa" e "muito boa".
 
 ---
@@ -23,9 +23,25 @@ as operações envolvem:
 │               └── example/
 │                   ├── DateFormatter.java         # formata datas e filtra senhas boas/muito boas
 │                   └── PasswordClassifier.java    # classifica senhas do arquivo passwords.csv
+├── target/
+│   ├── classes/
+│   │   └── com/
+│   │       └── example/
+│   │           ├── DateFormatter.class
+│   │           └── PasswordClassifier.class
+│   ├── generated-sources/
+│   │   └── annotations/
+│   ├── maven-status/
+│   │   └── maven-compiler-plugin/
+│   │       └── compile/
+│   │           └── default-compile/
+│   │               ├── createdFiles.lst
+│   │               └── inputFiles.lst
+│   └── test-classes/                             # classes compiladas dos testes (caso existam)
 ├── passwords.csv                       # arquivo original com as senhas (obtido via kaggle)
 ├── password_classifier.csv             # saída com classificação das senhas
 ├── passwords_formated_data.csv         # saída com datas formatadas
 ├── passwords_classifier.csv            # saída com senhas "boa" e "muito boa"
 ├── pom.xml                             # configuração do projeto com Maven (inclui dependência OpenCSV)
 └── README.md                           # este arquivo
+```
