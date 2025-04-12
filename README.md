@@ -55,7 +55,7 @@ neste projeto foram utilizados arrays do tipo `String[]` para representar as lin
 - **jdk 17** ou superior
 - **biblioteca opencsv**
 
-se estiver usando **maven**, adicione ao `pom.xml`:
+caso utilize maven, adicione a dependência no `pom.xml`:
 
 ```xml
 <dependency>
@@ -63,9 +63,87 @@ se estiver usando **maven**, adicione ao `pom.xml`:
     <artifactId>opencsv</artifactId>
     <version>5.7.1</version>
 </dependency>
+```
 
+---
 
-## 📁 estrutura dos arquivos
+## 💻 execução passo a passo
+
+1. clone ou baixe o projeto.
+2. certifique-se de ter o arquivo `passwords.csv` no diretório raiz.
+3. compile os arquivos java com:
+
+```bash
+javac -cp ".:path/to/opencsv.jar" src/main/java/com/example/*.java
+```
+
+4. execute o classificador:
+
+```bash
+java -cp ".:path/to/opencsv.jar:src/main/java" com.example.PasswordClassifier
+```
+
+5. execute o formatador:
+
+```bash
+java -cp ".:path/to/opencsv.jar:src/main/java" com.example.DateFormatter
+```
+
+🔁 substitua `path/to/opencsv.jar` pelo caminho da lib opencsv no seu sistema.
+
+---
+
+## 🧪 exemplos de entrada e saída
+
+### 📥 entrada (`passwords.csv`)
+
+```csv
+id,username,password,created_at
+1,joao123,senha123,2023-06-15 14:23:10
+2,ana_b,Abc@2023,2022-09-10 09:11:47
+3,lucasx,lucasx,2021-01-02 22:00:00
+```
+
+---
+
+## 📤 saída 1: `password_classifier.csv`
+
+arquivo com coluna adicional `"class"`:
+
+```csv
+id,username,password,created_at,class
+1,joao123,senha123,2023-06-15 14:23:10,fraca
+2,ana_b,Abc@2023,2022-09-10 09:11:47,muito boa
+3,lucasx,lucasx,2021-01-02 22:00:00,ruim
+```
+
+---
+
+## 📤 saída 2: `passwords_formated_data.csv`
+
+arquivo com data formatada:
+
+```csv
+id,username,password,created_at,class
+1,joao123,senha123,15/06/2023,fraca
+2,ana_b,Abc@2023,10/09/2022,muito boa
+3,lucasx,lucasx,02/01/2021,ruim
+```
+
+---
+
+## 📤 saída 3: `passwords_classifier.csv`
+
+apenas senhas boas ou muito boas:
+
+```csv
+id,username,password,created_at,class
+2,ana_b,Abc@2023,10/09/2022,muito boa
+```
+
+---
+
+## 📁 estrutura esperada
 
 ```bash
 📦 projeto-passwords/
@@ -98,3 +176,5 @@ se estiver usando **maven**, adicione ao `pom.xml`:
 ├── pom.xml                             # configuração do projeto com Maven (inclui dependência OpenCSV)
 └── README.md                           # este arquivo
 ```
+
+---
