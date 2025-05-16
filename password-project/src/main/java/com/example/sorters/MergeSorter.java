@@ -1,31 +1,63 @@
 package com.example.sorters;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.ArrayList;
-
-public class MergeSorter implements Sorter {
-    @Override
-    public void sort(List<String[]> list, Comparator<String[]> comp) {
-        if (list.size() <= 1) return;
-        int mid = list.size() / 2;
-        List<String[]> left = new ArrayList<>(list.subList(0, mid));
-        List<String[]> right = new ArrayList<>(list.subList(mid, list.size()));
-        sort(left, comp);
-        sort(right, comp);
-        merge(list, left, right, comp);
+public class MergeSorter implements Sorter{
+    public void sort(String[][] data, int column, boolean crescente) {
+        mergeSort(data, 0, data.length - 1, column, crescente);
     }
 
-    private void merge(List<String[]> list, List<String[]> left, List<String[]> right, Comparator<String[]> comp) {
-        int i = 0, j = 0, k = 0;
-        while (i < left.size() && j < right.size()) {
-            if (comp.compare(left.get(i), right.get(j)) <= 0) {
-                list.set(k++, left.get(i++));
-            } else {
-                list.set(k++, right.get(j++));
-            }
+    private static void mergeSort(String[][] data, int left, int right, int column, boolean crescente) {
+        if (left < right) {
+            int middle = (left + right) / 2;
+            mergeSort(data, left, middle, column, crescente);
+            mergeSort(data, middle + 1, right, column, crescente);
+            merge(data, left, middle, right, column, crescente);
         }
-        while (i < left.size()) list.set(k++, left.get(i++));
-        while (j < right.size()) list.set(k++, right.get(j++));
+    }
+
+    private static void merge(String[][] data, int left, int middle, int right, int column, boolean crescente) {
+        int n1 = middle - left + 1;
+        int n2 = right - middle;
+
+        String[][] L = new String[n1][data[0].length];
+        String[][] R = new String[n2][data[0].length];
+
+        for (int i = 0; i < n1; i++)
+            L[i] = data[left + i];
+        for (int j = 0; j < n2; j++)
+            R[j] = data[middle + 1 + j];
+
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            if (comparar(L[i][column], R[j][column], crescente)) {
+                data[k] = L[i];
+                i++;
+            } else {
+                data[k] = R[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            data[k] = L[i];
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            data[k] = R[j];
+            j++;
+            k++;
+        }
+    }
+
+    private static boolean comparar(String a, String b, boolean crescente) {
+        try {
+            double numA = Double.parseDouble(a);
+            double numB = Double.parseDouble(b);
+            return crescente ? numA <= numB : numA >= numB;
+        } catch (NumberFormatException e) {
+            return crescente ? a.compareTo(b) <= 0 : a.compareTo(b) >= 0;
+        }
     }
 }

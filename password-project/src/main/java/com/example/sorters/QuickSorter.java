@@ -1,33 +1,41 @@
 package com.example.sorters;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Collections;
-
 public class QuickSorter implements Sorter {
+
     @Override
-    public void sort(List<String[]> list, Comparator<String[]> comp) {
-        quickSort(list, comp, 0, list.size() - 1);
+    public void sort(String[][] data, int columnIndex, boolean descending) {
+        quickSort(data, 0, data.length - 1, columnIndex, descending);
     }
 
-    private void quickSort(List<String[]> list, Comparator<String[]> comp, int low, int high) {
+    private void quickSort(String[][] data, int low, int high, int columnIndex, boolean descending) {
         if (low < high) {
-            int pi = partition(list, comp, low, high);
-            quickSort(list, comp, low, pi - 1);
-            quickSort(list, comp, pi + 1, high);
+            int pi = partition(data, low, high, columnIndex, descending);
+            quickSort(data, low, pi - 1, columnIndex, descending);
+            quickSort(data, pi + 1, high, columnIndex, descending);
         }
     }
 
-    int partition(List<String[]> list, Comparator<String[]> comp, int low, int high) {
-        String[] pivot = list.get(high);
+    private int partition(String[][] data, int low, int high, int columnIndex, boolean descending) {
+        String[] pivot = data[high];
         int i = low - 1;
+
         for (int j = low; j < high; j++) {
-            if (comp.compare(list.get(j), pivot) <= 0) {
+            boolean condition = data[j][columnIndex].compareTo(pivot[columnIndex]) < 0;
+            if (descending) condition = !condition;
+
+            if (condition) {
                 i++;
-                Collections.swap(list, i, j);
+                swap(data, i, j);
             }
         }
-        Collections.swap(list, i + 1, high);
+
+        swap(data, i + 1, high);
         return i + 1;
+    }
+
+    private void swap(String[][] data, int i, int j) {
+        String[] temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
     }
 }

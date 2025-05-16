@@ -1,43 +1,64 @@
 package com.example.sorters;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Collections;
-
 public class QuickMedianaSorter implements Sorter {
+
     @Override
-    public void sort(List<String[]> list, Comparator<String[]> comp) {
-        quickSortMediana(list, comp, 0, list.size() - 1);
+    public void sort(String[][] data, int columnIndex, boolean descending) {
+        quickSortMediana(data, 0, data.length - 1, columnIndex, descending);
     }
 
-    private void quickSortMediana(List<String[]> list, Comparator<String[]> comp, int low, int high) {
+    private void quickSortMediana(String[][] data, int low, int high, int columnIndex, boolean descending) {
         if (low < high) {
-            int pi = partitionMediana(list, comp, low, high);
-            quickSortMediana(list, comp, low, pi - 1);
-            quickSortMediana(list, comp, pi + 1, high);
+            int pi = partitionMediana(data, low, high, columnIndex, descending);
+            quickSortMediana(data, low, pi - 1, columnIndex, descending);
+            quickSortMediana(data, pi + 1, high, columnIndex, descending);
         }
     }
 
-    private int partitionMediana(List<String[]> list, Comparator<String[]> comp, int low, int high) {
+    private int partitionMediana(String[][] data, int low, int high, int columnIndex, boolean descending) {
         int mid = (low + high) / 2;
-        String[] a = list.get(low);
-        String[] b = list.get(mid);
-        String[] c = list.get(high);
-        String[] pivot = medianOfThree(a, b, c, comp);
-        int pivotIndex = list.indexOf(pivot);
-        Collections.swap(list, pivotIndex, high);
-        return new QuickSorter().partition(list, comp, low, high);
+
+        // pegar três valores para calcular a mediana: low, mid, high
+        String[] a = data[low];
+        String[] b = data[mid];
+        String[] c = data[high];
+
+        String pivotValue = mediana(a[columnIndex], b[columnIndex], c[columnIndex]);
+        int pivotIndex = findIndex(data, low, high, pivotValue, columnIndex);
+        swap(data, pivotIndex, high);
+
+        String[] pivot = data[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+            boolean condition = data[j][columnIndex].compareTo(pivot[columnIndex]) < 0;
+            if (descending) condition = !condition;
+            if (condition) {
+                i++;
+                swap(data, i, j);
+            }
+        }
+
+        swap(data, i + 1, high);
+        return i + 1;
     }
 
-    private String[] medianOfThree(String[] a, String[] b, String[] c, Comparator<String[]> comp) {
-        if (comp.compare(a, b) < 0) {
-            if (comp.compare(b, c) < 0) return b;
-            else if (comp.compare(a, c) < 0) return c;
-            else return a;
-        } else {
-            if (comp.compare(a, c) < 0) return a;
-            else if (comp.compare(b, c) < 0) return c;
-            else return b;
+    private String mediana(String a, String b, String c) {
+        if ((a.compareTo(b) >= 0 && a.compareTo(c) <= 0) || (a.compareTo(c) >= 0 && a.compareTo(b) <= 0)) return a;
+        if ((b.compareTo(a) >= 0 && b.compareTo(c) <= 0) || (b.compareTo(c) >= 0 && b.compareTo(a) <= 0)) return b;
+        return c;
+    }
+
+    private int findIndex(String[][] data, int low, int high, String pivot, int columnIndex) {
+        for (int i = low; i <= high; i++) {
+            if (data[i][columnIndex].equals(pivot)) return i;
         }
+        return high; // fallback
+    }
+
+    private void swap(String[][] data, int i, int j) {
+        String[] temp = data[i];
+        data[i] = data[j];
+        data[j] = temp;
     }
 }

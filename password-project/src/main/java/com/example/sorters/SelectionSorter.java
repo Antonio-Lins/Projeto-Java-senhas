@@ -1,20 +1,32 @@
 package com.example.sorters;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Collections;
+public class SelectionSorter implements Sorter{
+    public void sort(String[][] data, int column, boolean crescente) {
+        int n = data.length;
 
-public class SelectionSorter implements Sorter {
-    @Override
-    public void sort(List<String[]> list, Comparator<String[]> comp) {
-        for (int i = 0; i < list.size() - 1; i++) {
-            int minIdx = i;
-            for (int j = i + 1; j < list.size(); j++) {
-                if (comp.compare(list.get(j), list.get(minIdx)) < 0) {
-                    minIdx = j;
+        for (int i = 0; i < n - 1; i++) {
+            int indiceExtremo = i;
+
+            for (int j = i + 1; j < n; j++) {
+                if (comparar(data[j][column], data[indiceExtremo][column], crescente)) {
+                    indiceExtremo = j;
                 }
             }
-            Collections.swap(list, i, minIdx);
+
+            // troca
+            String[] temp = data[i];
+            data[i] = data[indiceExtremo];
+            data[indiceExtremo] = temp;
+        }
+    }
+
+    private static boolean comparar(String a, String b, boolean crescente) {
+        try {
+            double numA = Double.parseDouble(a);
+            double numB = Double.parseDouble(b);
+            return crescente ? numA < numB : numA > numB;
+        } catch (NumberFormatException e) {
+            return crescente ? a.compareTo(b) < 0 : a.compareTo(b) > 0;
         }
     }
 }
