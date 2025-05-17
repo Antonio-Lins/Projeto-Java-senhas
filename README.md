@@ -249,3 +249,5 @@ id,username,password,created_at,class
 ```
 
 ---
+
+Colaboradores: [Antonio da Silva Lins, Matheus Leite Abreu, Emerson Costa de Sousa]
